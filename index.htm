@@ -5,26 +5,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>cronometro</title>
-    <!-- <link rel="stylesheet" href="styles.css"> -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            /* Additional styles for the body if needed */
+        }
+    </style>
 </head>
 
 <body>
 
-    <div id="main">
+    <div id="main" style="display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    background-color: rgb(14, 95, 133);
+    padding: 1rem;
+    border-radius: 10px;">
 
-        <p>Stats:</br>Tiempo total: <span id="ttotal"></span></p>
+        <p style="background-color: rgba(0, 0, 0, 0.26);
+    padding: 1rem;
+    border-radius: 10px; color: aliceblue;">Stats: </br>Tiempo total de hoy: <span id="ttotal"></span></p>
 
     </div>
     <script>
         var timer = null;
-        var totalTime = "";
+        var totalTimeString = "";
+        var totalTimeSeconds = 0;
         var currentTime = 0; //in seconds
+
+        const buttonsStyle = "width: 50px; height: 30px; color: white; background-color: rgba(174, 219, 206, 0.5); border-radius: 10px; padding: 5px; text-align: center; margin-right: 10px; box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.26); font-family: 'Roboto'; cursor: pointer";
+        const counterStyle = "width: 50px; height: 30px; color: rgb(14, 95, 133); background-color: white ;border: none; border-radius: 10px; padding: 5px; text-align: center; margin-right: 10px; font-family: 'Roboto'";
+        const hiddenStyle = "display: none";
 
         const createInput = function () {
             if (timer) {
                 timer = clearInterval(timer);
                 timer = null;
             }
+            currentTime = 0;
             const prevButtons = document.getElementsByClassName('startbuttons');
             const prevInputs = document.getElementsByClassName('inputElm');
             const stpBtns = document.getElementsByClassName('stopButtons');
@@ -32,7 +51,7 @@
                 for (var i = 0; i < prevButtons.length; i++) {
                     prevButtons[i].disabled = 'true';
                     prevInputs[i].disabled = 'true';
-                    stpBtns[i].disabled = 'true';
+                    stpBtns[i].style = hiddenStyle;
                 }
             }
             const taskContainer = document.createElement('div');
@@ -43,15 +62,19 @@
             inputElement.className = 'inputElm';
             inputElement.placeholder = "En que vas a trabajar?";
             inputElement.setAttribute('type', 'text');
+            inputElement.style = "width: 200px; color: rgb(14, 95, 133); border: none; border-radius: 10px; height: 20px; padding: 5px; text-align: center; margin-right: 10px; font-family: 'Roboto'";
 
             const startButtonElement = document.createElement('button');
             startButtonElement.className = 'startbuttons';
             startButtonElement.textContent = 'Start';
             startButtonElement.onclick = () => startButton();
+            startButtonElement.style = buttonsStyle;
+
 
             const stopButtonElement = document.createElement('button');
             stopButtonElement.className = 'stopButtons';
             stopButtonElement.textContent = 'Stop';
+            stopButtonElement.style = buttonsStyle;
             stopButtonElement.style.display = 'none';
             stopButtonElement.onclick = () => createInput();
 
@@ -64,39 +87,37 @@
 
         const Count = function () {
             const prevButtons = document.getElementsByClassName('startbuttons');
-            const timeString = prevButtons[prevButtons.length - 1].textContent;
-            const [hoursStr, minutesStr, secondsStr] = timeString.split(':');
-            var hours = parseInt(hoursStr, 10);
-            var minutes = parseInt(minutesStr, 10);
-            var seconds = parseInt(secondsStr, 10);
-            if (seconds < 59)
-                seconds += 1;
-            else {
-                seconds = 0;
-                minutes += 1;
-            }
-            if (minutes < 59) { }
-            else {
-                minutes = 0;
-                hours += 1;
-            }
-            prevButtons[prevButtons.length - 1].textContent = `${hours}:${minutes}:${seconds}`;
+            const totalTimeStrElm = document.getElementById('ttotal');
+            currentTime += 1;
+            totalTimeSeconds += 1;
+            const timeString = convertToTimeFormat(currentTime);
+            prevButtons[prevButtons.length - 1].textContent = timeString;
+            totalTimeStrElm.innerHTML = convertToTimeFormat(totalTimeSeconds);
             if (!timer) {
                 timer = setInterval(Count, 1000);
             }
         }
 
         const startButton = function () {
+            const prevInputs = document.getElementsByClassName('inputElm');
+            if (!prevInputs[prevInputs.length - 1].value) {
+                prevInputs[prevInputs.length - 1].placeholder = "Por favor completa esto primero!";
+                return;
+            }
             const prevButtons = document.getElementsByClassName('startbuttons');
             const stpButtons = document.getElementsByClassName('stopButtons');
             prevButtons[prevButtons.length - 1].textContent = '0:0:0';
+            prevButtons[prevButtons.length - 1].style = counterStyle;
             prevButtons[prevButtons.length - 1].onclick = null;
             stpButtons[stpButtons.length - 1].style.display = 'inline-block';
             Count();
         }
 
         const convertToTimeFormat = function (timeInSeconds) {
-
+            var hours = Math.floor(timeInSeconds / 3600);
+            var minutes = Math.floor(timeInSeconds / 60) - (hours * 60);
+            var seconds = timeInSeconds - minutes * 60 - hours * 3600;
+            return `${hours}:${minutes}:${seconds}`;
         }
     </script>
 </body>
