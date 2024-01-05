@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cronometro</title>
+    <!-- <link rel="stylesheet" href="styles.css"> -->
+</head>
+
+<body>
+
+    <div id="main">
+
+        <p>Stats:</br>Tiempo total: <span id="ttotal"></span></p>
+
+    </div>
+    <script>
+        var timer = null;
+        var totalTime = "";
+        var currentTime = 0; //in seconds
+
+        const createInput = function () {
+            if (timer) {
+                timer = clearInterval(timer);
+                timer = null;
+            }
+            const prevButtons = document.getElementsByClassName('startbuttons');
+            const prevInputs = document.getElementsByClassName('inputElm');
+            const stpBtns = document.getElementsByClassName('stopButtons');
+            if (prevButtons.length > 0) {
+                for (var i = 0; i < prevButtons.length; i++) {
+                    prevButtons[i].disabled = 'true';
+                    prevInputs[i].disabled = 'true';
+                    stpBtns[i].disabled = 'true';
+                }
+            }
+            const taskContainer = document.createElement('div');
+            taskContainer.className = 'inputContainer';
+            taskContainer.style.marginBottom = '1rem';
+            const mainDiv = document.getElementById('main');
+            const inputElement = document.createElement('input');
+            inputElement.className = 'inputElm';
+            inputElement.placeholder = "En que vas a trabajar?";
+            inputElement.setAttribute('type', 'text');
+
+            const startButtonElement = document.createElement('button');
+            startButtonElement.className = 'startbuttons';
+            startButtonElement.textContent = 'Start';
+            startButtonElement.onclick = () => startButton();
+
+            const stopButtonElement = document.createElement('button');
+            stopButtonElement.className = 'stopButtons';
+            stopButtonElement.textContent = 'Stop';
+            stopButtonElement.style.display = 'none';
+            stopButtonElement.onclick = () => createInput();
+
+            taskContainer.appendChild(inputElement);
+            taskContainer.appendChild(startButtonElement);
+            taskContainer.appendChild(stopButtonElement);
+            mainDiv.appendChild(taskContainer);
+        }
+        createInput();
+
+        const Count = function () {
+            const prevButtons = document.getElementsByClassName('startbuttons');
+            const timeString = prevButtons[prevButtons.length - 1].textContent;
+            const [hoursStr, minutesStr, secondsStr] = timeString.split(':');
+            var hours = parseInt(hoursStr, 10);
+            var minutes = parseInt(minutesStr, 10);
+            var seconds = parseInt(secondsStr, 10);
+            if (seconds < 59)
+                seconds += 1;
+            else {
+                seconds = 0;
+                minutes += 1;
+            }
+            if (minutes < 59) { }
+            else {
+                minutes = 0;
+                hours += 1;
+            }
+            prevButtons[prevButtons.length - 1].textContent = `${hours}:${minutes}:${seconds}`;
+            if (!timer) {
+                timer = setInterval(Count, 1000);
+            }
+        }
+
+        const startButton = function () {
+            const prevButtons = document.getElementsByClassName('startbuttons');
+            const stpButtons = document.getElementsByClassName('stopButtons');
+            prevButtons[prevButtons.length - 1].textContent = '0:0:0';
+            prevButtons[prevButtons.length - 1].onclick = null;
+            stpButtons[stpButtons.length - 1].style.display = 'inline-block';
+            Count();
+        }
+
+        const convertToTimeFormat = function (timeInSeconds) {
+
+        }
+    </script>
+</body>
+
+</html>
