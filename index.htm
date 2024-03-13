@@ -17,18 +17,43 @@
 
 <body>
 
+    <div id="navbar"
+        style="border-radius: 10px; padding: 5px; background-color: rgb(136, 56, 93); margin-bottom: 1rem; display: flex; flex-direction: row; align-items: center; justify-content: space-around;">
+        <button id="crono" onclick="show('crono')">Crono</button>
+        <button id="url_variants" onclick="show('url')">Url variants</button>
+        <button id="empty" onclick="show('empty')">Empty</button>
+    </div>
+
     <div id="main" style="display: flex; 
     flex-direction: column; 
     align-items: center; 
     background-color: rgb(14, 95, 133);
     padding: 1rem;
-    border-radius: 10px;">
+    border-radius: 10px;
+    visibility: visible;">
 
         <p style="background-color: rgba(0, 0, 0, 0.26);
     padding: 1rem;
     border-radius: 10px; color: aliceblue;">Stats: </br>Tiempo total de hoy: <span id="ttotal"></span></p>
-
+        <textarea style="width: 500px; height: 50px; margin-bottom: 1rem;" placeholder="Notas..."></textarea>
     </div>
+
+    <div id="url" style="display: none; 
+        flex-direction: column; 
+        align-items: center; 
+        background-color: rgb(25, 104, 36);
+        padding: 1rem;
+        border-radius: 10px;
+        visibility: visible;">
+
+        <div style="display: flex; flex-direction: row; align-items: center;"><input style="margin-right: 10px;"
+                id="url_input" placeholder="google.com"><button onclick="generateURLVariations()">Generate</button>
+        </div>
+        <div id="url_list"></div>
+    </div>
+
+
+
     <script>
         window.onbeforeunload = function (e) {
             e = e || window.event;
@@ -39,6 +64,50 @@
             // For Safari
             return 'Seguro que deseas salir?';
         };
+
+        function show(tab) {
+            switch (tab) {
+                case "crono":
+                    {
+                        document.getElementById('main').style.display = "flex";
+                        document.getElementById('url').style.display = "none";
+
+                        break;
+                    }
+                case "url":
+                    {
+                        document.getElementById('url').style.display = "flex";
+                        document.getElementById('main').style.display = "none";
+
+                        break;
+                    }
+                case "empty":
+                    {
+                        break;
+                    }
+            }
+        }
+
+        function generateURLVariations() {
+            const variations = [];
+
+            var url = document.getElementById('url_input').value;
+
+            // remover espacios
+            url = url.trim();
+
+            variations.push(url);
+            variations.push("http://" + url);
+            variations.push("http://www." + url);
+            variations.push("https://" + url);
+            variations.push("https://www." + url);
+            variations.push(url + "/");
+            variations.push("*" + url);
+
+            var list_parent = document.getElementById('url_list');
+
+            list_parent.innerHTML = variations.map(e => `<span>${e}</span>`).join(", ");
+        }
 
 
 
